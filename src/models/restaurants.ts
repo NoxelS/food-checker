@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { sendRequest } from '../api';
 import { getDefaultOptions } from '../helper';
 import { Product } from './product';
 
@@ -107,21 +108,18 @@ export class Restaurant {
     }
 
     async initiateGetDetailedInformation() {
-        const res = await axios('https://cw-api.takeaway.com/api/v28/restaurant?slug=' + this.primarySlug, getDefaultOptions());
+        const res = await sendRequest('https://cw-api.takeaway.com/api/v28/restaurant?slug=' + this.primarySlug, getDefaultOptions());
 
-        this.deliveryOptions = res.data.delivery as DeliveryOptions;
+        this.deliveryOptions = res.delivery as DeliveryOptions;
 
-
-        this.currency = res.data.menu.currency;
+        this.currency = res.menu.currency;
 
         const products: Product[] = [];
-        Object.keys(res.data.menu.products).forEach(productId => {
-            const product = res.data.menu.products[productId];
+        Object.keys(res.menu.products).forEach(productId => {
+            const product = res.menu.products[productId];
             const name = product.name;
             product.variants.forEach(variant => {
-                products.push(
-                    new Product(name, variant.description, variant.id, variant.prices.delivery, variant.name)
-                )
+                products.push(new Product(name, variant.description, variant.id, variant.prices.delivery, variant.name));
             });
         });
 

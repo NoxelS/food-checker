@@ -110,3 +110,5 @@ dist
 *.xlsx
 
 data/*
+
+cache/*
